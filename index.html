@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCQ Practice</title>
+<style>
+:root{
+  --bg:#f5f6fb;--card:#fff;--text:#1d2030;--muted:#6b7089;--line:#e3e6f0;
+  --accent:#4f46e5;--accent-soft:#eceafd;
+  --ok:#15803d;--ok-bg:#e7f7ec;--bad:#b91c1c;--bad-bg:#fdecec;
+  --easy:#15803d;--medium:#b45309;--hard:#b91c1c;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#12141f;--card:#1c1f2e;--text:#eceefa;--muted:#9aa0bd;--line:#2d3150;
+  --accent:#8b86ff;--accent-soft:#2a2850;--ok:#4ade80;--ok-bg:#12301f;--bad:#f87171;--bad-bg:#3a1618;
+  --easy:#4ade80;--medium:#fbbf24;--hard:#f87171;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.8rem;margin:10px 0 4px}
+.sub{color:var(--muted);margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.subject{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:.15s}
+.subject:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 18px rgba(79,70,229,.15)}
+.subject .num{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;border-radius:8px;padding:2px 10px;font-size:.8rem}
+.subject h3{margin:12px 0 4px;font-size:1.1rem}
+.subject p{margin:0;color:var(--muted);font-size:.9rem}
+.subject.empty{opacity:.75}
+.back{background:none;border:0;color:var(--accent);font:inherit;cursor:pointer;padding:6px 0;margin-bottom:6px;font-weight:600}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0}
+.stats{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;justify-content:space-between}
+.stat b{font-size:1.2rem}
+.stat span{color:var(--muted);font-size:.85rem;display:block}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:.3s}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip,.btn,select{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:99px;padding:6px 14px;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn{border-radius:10px}
+.btn:hover,.chip:hover{border-color:var(--accent)}
+select{border-radius:10px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:.78rem}
+.tag{border-radius:99px;padding:2px 10px;font-weight:700;border:1px solid currentColor}
+.tag.easy{color:var(--easy)}.tag.medium{color:var(--medium)}.tag.hard{color:var(--hard)}
+.tag.topic{color:var(--muted);font-weight:600}
+.qtext{font-weight:600;margin:0 0 12px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt .l{font-weight:700;color:var(--accent);min-width:18px}
+.q.done .opt{cursor:default}
+.q.done .opt:hover{border-color:var(--line)}
+.opt.ok{background:var(--ok-bg);border-color:var(--ok)}
+.opt.ok .l{color:var(--ok)}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad)}
+.opt.bad .l{color:var(--bad)}
+.note{margin-top:8px;font-size:.88rem;font-weight:600}
+.note.ok{color:var(--ok)}.note.bad{color:var(--bad)}
+.emptybox{text-align:center;padding:50px 20px;color:var(--muted)}
+.result{text-align:center;font-size:1.1rem}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ---------- QUESTION DATA ----------
+   Format: [difficulty, topic, question, CORRECT answer, wrong1, wrong2, wrong3]
+   (options are shuffled automatically)
+   d: e = Easy, m = Medium, h = Hard
+----------------------------------- */
+const MGMT = [
+/* ===== EASY ===== */
+["e","Basics","Management means coordinating and ______ the work of others so that goals are achieved.","supervising","ignoring","replacing","copying"],
+["e","Basics","Efficiency means:","Doing things right","Doing the right thing","Doing nothing","Spending more money"],
+["e","Basics","Effectiveness means:","Doing the right thing","Doing things right","Avoiding waste only","Working as fast as possible"],
+["e","Managers","How many types of managers are listed in the notes?","Three","Two","Four","Five"],
+["e","Managers","Which of these is NOT a type of manager?","Last-line manager","First-line manager","Middle manager","Top manager"],
+["e","Managers","Which manager directly supervises entry-level employees?","First-line manager","Top manager","Middle manager","Director of the board"],
+["e","Managers","Which manager connects top managers with first-line managers and other departments?","Middle manager","First-line manager","Top manager","Entry-level employee"],
+["e","Managers","Which manager is responsible for the overall direction and success of an organization?","Top manager","First-line manager","Middle manager","Supervisor"],
+["e","Functions","How many main functions does a manager perform?","Four","Two","Three","Six"],
+["e","Functions","Which of these is NOT one of the four management functions?","Selling","Planning","Organizing","Controlling"],
+["e","Functions","Deciding the organization's goals and how to achieve them is:","Planning","Controlling","Leading","Organizing"],
+["e","Functions","Arranging people, jobs and resources to complete work properly is:","Organizing","Planning","Leading","Controlling"],
+["e","Functions","Working with and guiding people to achieve goals is:","Leading","Controlling","Planning","Organizing"],
+["e","Functions","Checking progress toward goals and taking corrective action is:","Controlling","Planning","Organizing","Leading"],
+["e","Roles","Managerial roles are divided into how many categories?","Three","Two","Four","Five"],
+["e","Roles","Which of these is NOT a category of managerial roles?","Financial roles","Informational roles","Interpersonal roles","Decisional roles"],
+["e","Roles","Which informational role collects useful information related to the organization and its work?","Monitor","Figurehead","Negotiator","Liaison"],
+["e","Roles","Which role shares important information with people inside the organization?","Disseminator","Spokesperson","Monitor","Entrepreneur"],
+["e","Roles","Which role communicates information about the organization to people outside it?","Spokesperson","Leader","Liaison","Resource allocator"],
+["e","Roles","Which role performs formal, social and legal duties as a representative of the organization?","Figurehead","Leader","Liaison","Negotiator"],
+["e","Roles","Which interpersonal role guides, motivates, selects and trains employees?","Leader","Monitor","Entrepreneur","Negotiator"],
+["e","Roles","Which decisional role decides how money, employees, equipment and time should be used?","Resource allocator","Negotiator","Disturbance handler","Entrepreneur"],
+["e","Roles","Which role discusses and agrees on terms that benefit the organization?","Negotiator","Figurehead","Monitor","Disseminator"],
+["e","Roles","Which role involves finding new ideas and starting projects to improve the organization?","Entrepreneur","Liaison","Spokesperson","Monitor"],
+["e","Skills","The knowledge and ability needed to perform a specific job or task is called:","Technical skill","Human skill","Conceptual skill","Motivation to manage"],
+["e","Skills","The ability to work well with other people is called:","Human skill","Technical skill","Conceptual skill","Motivation to manage"],
+["e","Skills","The ability to understand complex situations and see how different parts of an organization work together is:","Conceptual skill","Technical skill","Human skill","Communication skill"],
+["e","Organization","An organization is best described as:","A planned group of people working together to achieve a specific purpose","A random crowd of people","A single person with a goal","A building with offices"],
+["e","Organization","Which is a common characteristic of every organization?","It is composed of people","It has no fixed purpose","It has no structure","It has unlimited resources"],
+["e","History","Who published 'The Wealth of Nations' in 1776?","Adam Smith","Frederick Taylor","Henri Fayol","Max Weber"],
+["e","History","Division of labour means:","Dividing a job into smaller tasks and assigning them to different workers","One worker doing every task","Dividing profits among owners","Dividing an organization into countries"],
+["e","History","Who is known as the father of scientific management?","Frederick Winslow Taylor","Max Weber","Henri Fayol","Adam Smith"],
+["e","History","Which ancient civilization used management to build the pyramids?","Egypt","China","Venice","Greece"],
+["e","History","Which ancient civilization used management to build the Great Wall?","China","Egypt","Venice","Persia"],
+["e","History","The Industrial Revolution took place from:","1750 to 1850","1650 to 1750","1850 to 1950","1900 to 2000"],
+["e","Theories","Who developed the 14 principles of management?","Henri Fayol","Max Weber","Frederick Taylor","Adam Smith"],
+["e","Theories","Max Weber developed a theory of authority based on an ideal organization called:","Bureaucracy","Quality circle","Scientific method","Operations research"],
+["e","Theories","The quantitative approach is also called:","Operations research","Quality management","Bureaucracy","Scientific management"],
+["e","Theories","Quality management focuses on:","Satisfying customers and continuously improving performance","Reducing the number of customers","Ignoring processes","Increasing prices"],
+["e","History","The microchronometer was developed by:","Frank and Lillian Gilbreth","Frederick Taylor","Henri Fayol","Max Weber"],
+
+/* ===== MEDIUM ===== */
+["m","Basics","Efficiency means completing work by using the minimum amount of:","Time, money, effort and resources","Goals and plans","Customers","Employees only"],
+["m","Managers","Which manager prepares the daily schedule and teaches new employees how to perform their jobs?","First-line manager","Middle manager","Top manager","Chief executive"],
+["m","Managers","Which is a responsibility of a first-line manager?","Making sure employees complete assigned tasks properly","Monitoring the business environment","Creating plans for organizational change","Setting major strategies"],
+["m","Managers","Which is a responsibility of a middle manager?","Coordinating work between different groups, departments and divisions","Teaching new employees","Preparing the daily schedule","Rewarding entry-level employees directly"],
+["m","Managers","Middle managers mainly help to implement:","Plans made by top management","Daily jobs of workers","Only their own personal plans","Government laws"],
+["m","Managers","Which is a responsibility of a top manager?","Building a positive organizational culture through their actions","Preparing the daily schedule","Rewarding entry-level employees","Teaching new employees their jobs"],
+["m","Managers","Monitoring the business environment to identify changes and opportunities is mainly the job of:","Top managers","First-line managers","Entry-level employees","Customers"],
+["m","Functions","Which activity is part of organizing?","Deciding who will perform each job","Comparing actual and planned performance","Motivating employees","Taking corrective action"],
+["m","Functions","A manager compares actual performance with planned performance and corrects problems. This is:","Controlling","Planning","Organizing","Leading"],
+["m","Functions","Motivating employees, giving directions and communicating with them are part of:","Leading","Planning","Organizing","Controlling"],
+["m","Functions","A manager decides what needs to be done and how it will be done. This is:","Planning","Leading","Controlling","Organizing"],
+["m","Roles","Reading reports and industry news, attending seminars and maintaining professional contacts are activities of the:","Monitor","Disseminator","Figurehead","Negotiator"],
+["m","Roles","Sending memos and reports and sharing decisions with employees are activities of the:","Disseminator","Monitor","Spokesperson","Liaison"],
+["m","Roles","Presenting reports and attending conferences and meetings are activities of the:","Spokesperson","Disseminator","Monitor","Leader"],
+["m","Roles","Greeting visitors, signing official documents and attending official ceremonies are activities of the:","Figurehead","Leader","Liaison","Entrepreneur"],
+["m","Roles","Which role builds and maintains relationships with people inside and outside the organization?","Liaison","Leader","Figurehead","Disseminator"],
+["m","Roles","Solving conflict between employees, taking corrective action and handling crisis situations are activities of the:","Disturbance handler","Resource allocator","Negotiator","Monitor"],
+["m","Roles","Preparing and approving the budget, creating schedules and setting priorities are activities of the:","Resource allocator","Entrepreneur","Negotiator","Liaison"],
+["m","Roles","Introducing new ideas, starting improvement projects and planning for the future are activities of the:","Entrepreneur","Disturbance handler","Figurehead","Spokesperson"],
+["m","Roles","The disturbance handler deals mainly with:","Unexpected problems, conflict and difficult situations","Routine paperwork","Public ceremonies","New product ideas"],
+["m","History","According to the notes, the Venetians used which early management practice?","A floating warship assembly line","Pyramid building teams","A bureaucracy","Quality circles"],
+["m","History","Which of these did Taylor emphasize?","Selecting the right worker and offering financial incentives","Using guesswork and old methods","Giving workers no tools","Removing all managers"],
+["m","History","Taylor's first principle is to:","Develop a scientific method for every job instead of using old-fashioned guesswork","Divide authority equally among all workers","Reduce wages","Remove standard methods"],
+["m","History","Taylor's fourth principle is to divide work and responsibility between:","Managers and workers according to their abilities","Customers and suppliers","Workers only","Owners and banks"],
+["m","History","Taylor published 'The Principles of Scientific Management' in:","1911","1776","1850","1950"],
+["m","History","The Gilbreths tried to increase worker productivity by:","Reducing unnecessary movements","Increasing working hours","Paying lower wages","Hiring more managers"],
+["m","Theories","Max Weber emphasized control through:","Knowledge, expertise and experience","Fear and punishment","Personal friendship","Luck"],
+["m","Theories","In Weber's bureaucracy, promotion is based on:","Merit","Personal relationships","Age only","Random selection"],
+["m","Theories","In Weber's bureaucracy, hiring is based on:","Qualifications","Family connections","Friendship","Luck"],
+["m","Fayol","Which Fayol principle says each employee should receive orders from only one manager?","Unity of command","Unity of direction","Scalar chain","Equity"],
+["m","Fayol","Fayol's 'Unity of direction' means:","Activities with the same goal should follow one plan","Employees get orders from one manager","Pay should be fair","Authority stays at the top"],
+["m","Fayol","Fayol's 'Scalar chain' means:","Follow the formal line of authority","Keep people and material in their proper place","Treat employees fairly","Promote teamwork"],
+["m","Fayol","Fayol's 'Order' means:","Keep people and material in their proper place","Follow the formal line of authority","Provide job stability","Encourage new ideas"],
+["m","Fayol","Fayol's 'Equity' means:","Treat employees fairly","Give orders to everyone","Keep authority at the top","Divide work into tasks"],
+["m","Fayol","Fayol's 'Remuneration' says employees should receive:","Fair payment","No payment","Only bonuses","Payment based on age"],
+["m","Fayol","Fayol's 'Centralization' is about:","Deciding how much authority should remain at the top","Dividing work into specialized tasks","Following rules","Teamwork"],
+["m","Fayol","Fayol's 'Esprit de corps' promotes:","Teamwork and unity among employees","Competition between employees","Strict discipline only","Job stability"],
+["m","Fayol","Fayol's 'Stability of tenure' means providing employees with:","Job stability","Higher pay","More authority","New ideas"],
+["m","Fayol","Fayol's 'Initiative' means encouraging employees to:","Suggest and implement ideas","Follow rules only","Avoid decisions","Wait for orders"],
+["m","Fayol","Fayol's 'Subordination of individual interest' says that:","Organizational interests should come before personal interests","Personal interests come first","Managers should have no interests","Pay should be equal"],
+["m","Fayol","Fayol's 'Discipline' says that employees should:","Follow rules","Make their own rules","Ignore managers","Choose their own tasks"],
+["m","Theories","The quantitative approach developed from mathematical and statistical methods used to solve military logistics and quality-control problems during:","World War II","World War I","The Industrial Revolution","The Great Depression"],
+["m","Theories","Quality management also involves:","Accurate measurement and empowering employees to contribute to quality improvement","Ignoring employees' ideas","Reducing quality to cut cost","Using only guesswork"],
+["m","History","Today's managers use scientific management by:","Studying time and movements, hiring the best-qualified employees and using output-based incentives","Removing all rules","Ignoring productivity","Avoiding incentives"],
+["m","Skills","Motivation to manage means:","The willingness and desire to take responsibility for managing people and work","Having technical knowledge","Having a high salary","Avoiding responsibility"],
+["m","Skills","Which skills help managers communicate and build good relationships with other people?","Interpersonal skills","Technical skills","Conceptual skills","Accounting skills"],
+["m","Skills","Communication skills help managers to:","Share information, explain ideas and understand other people","Operate machines","Calculate budgets only","Avoid meetings"],
+["m","Skills","Effectiveness skills help managers to:","Complete important tasks and achieve organizational goals","Avoid all tasks","Increase prices","Reduce teamwork"],
+["m","Organization","A 'deliberate structure' in an organization refers to:","An organized arrangement of jobs, duties and responsibilities","A random arrangement of staff","The building design","A set of products"],
+["m","History","Early management practices in ancient civilizations were used to:","Complete large projects","Run small shops only","Write laws only","Collect taxes only"],
+["m","History","The Industrial Revolution led to the creation of:","Large organizations that needed management","Smaller family farms only","Fewer machines","The pyramids"],
+
+/* ===== HARD ===== */
+["h","Basics","A manager completes a project using very little time and money, but the product is not what the customers wanted. The manager was:","Efficient but not effective","Effective but not efficient","Both efficient and effective","Neither efficient nor effective"],
+["h","Basics","A manager achieves exactly what the organization's goals require, but wastes a lot of time and money. The manager was:","Effective but not efficient","Efficient but not effective","Both efficient and effective","Neither efficient nor effective"],
+["h","Basics","Which statement correctly compares efficiency and effectiveness?","Efficiency is doing things right with minimum resources; effectiveness is completing the right tasks to achieve goals","Efficiency is choosing the right goals; effectiveness is saving resources","They mean exactly the same thing","Efficiency is about goals; effectiveness is about avoiding waste"],
+["h","Fayol","An employee reports to two managers who give conflicting orders. Which Fayol principle is violated?","Unity of command","Unity of direction","Scalar chain","Equity"],
+["h","Fayol","Two departments share the same goal but follow separate plans. Which Fayol principle is violated?","Unity of direction","Unity of command","Discipline","Order"],
+["h","Fayol","A company where all major decisions are made only by top management shows a high level of:","Centralization","Initiative","Equity","Division of labour"],
+["h","Fayol","Which is Fayol's 9th principle?","Scalar chain","Order","Equity","Initiative"],
+["h","Fayol","Which is Fayol's 12th principle?","Stability of tenure","Equity","Initiative","Esprit de corps"],
+["h","Fayol","Which is Fayol's 14th principle?","Esprit de corps","Initiative","Stability of tenure","Centralization"],
+["h","Fayol","Which statement about Fayol is correct?","He believed management is a separate function from other organizational activities","He believed management is the same as accounting","He developed the microchronometer","He is known as the father of scientific management"],
+["h","Roles","A manager reads industry news, emails a summary to the team, and then presents the company's progress at an industry conference. In order, which roles are being played?","Monitor, Disseminator, Spokesperson","Disseminator, Monitor, Spokesperson","Spokesperson, Monitor, Disseminator","Monitor, Spokesperson, Disseminator"],
+["h","Roles","A machine breaks down suddenly and two employees argue over who is to blame. The manager calms everyone and solves the problem. Which role is this?","Disturbance handler","Resource allocator","Liaison","Entrepreneur"],
+["h","Roles","A manager signs an official document and attends a ceremony as the company's representative. Which role is this?","Figurehead","Negotiator","Leader","Disseminator"],
+["h","Roles","A manager discusses prices with a supplier and agrees on terms that benefit the company. Which role is this?","Negotiator","Liaison","Spokesperson","Resource allocator"],
+["h","Roles","A manager prepares the yearly budget and decides which team receives new equipment. Which role is this?","Resource allocator","Entrepreneur","Monitor","Figurehead"],
+["h","Roles","A manager proposes a new idea and starts a pilot project to improve the organization. Which role is this?","Entrepreneur","Disseminator","Disturbance handler","Liaison"],
+["h","Roles","A manager attends meetings with representatives of other organizations and maintains professional contacts. Which role is this?","Liaison","Spokesperson","Figurehead","Monitor"],
+["h","Roles","Which role and category pairing is correct?","Liaison - Interpersonal","Monitor - Decisional","Negotiator - Informational","Spokesperson - Interpersonal"],
+["h","Roles","Which role and category pairing is INCORRECT?","Entrepreneur - Informational","Figurehead - Interpersonal","Leader - Interpersonal","Disseminator - Informational"],
+["h","Functions","Which of these is NOT part of organizing?","Motivating employees to perform","Deciding where decisions will be made","Deciding who will work for whom","Deciding who will perform each job"],
+["h","Functions","Which sequence best matches planning, organizing, leading and controlling in that order?","Set goals; assign jobs; motivate staff; compare results with plan","Compare results with plan; set goals; assign jobs; motivate staff","Motivate staff; assign jobs; set goals; compare results","Assign jobs; compare results; set goals; motivate staff"],
+["h","Functions","Sales are below target, so a manager finds the cause and retrains the staff. Which function is mainly being used?","Controlling","Planning","Organizing","Leading"],
+["h","Functions","Which sequence best describes the controlling process?","Check progress, compare actual with planned performance, take corrective action","Take corrective action, set goals, check progress","Hire staff, assign jobs, motivate","Set goals, assign jobs, give directions"],
+["h","Managers","Who would most likely implement a change strategy created by top management across several departments?","Middle managers","First-line managers","Entry-level employees","Customers"],
+["h","Managers","Which of these is NOT a responsibility of a first-line manager?","Monitoring the business environment for changes and opportunities","Teaching new employees how to perform their job","Preparing the daily schedule","Encouraging, monitoring and rewarding employees"],
+["h","Managers","Which manager is most directly responsible for developing employees' commitment and sense of responsibility across the organization?","Top manager","First-line manager","Entry-level employee","Customer"],
+["h","Managers","A supervisor trains a new employee and prepares the daily schedule. This supervisor is a:","First-line manager","Middle manager","Top manager","Board chairperson"],
+["h","Skills","A manager sees how the finance, marketing and production departments work together. Which skill is this?","Conceptual skill","Technical skill","Human skill","Motivation to manage"],
+["h","Skills","A manager explains a new policy clearly and listens carefully to employee questions. Which skills are used?","Communication skills","Technical skills","Conceptual skills","Accounting skills"],
+["h","Skills","A technician repairs a machine using specialized knowledge. Which skill is this?","Technical skill","Human skill","Conceptual skill","Motivation to manage"],
+["h","History","Which statement about Adam Smith is correct?","He supported the division of labour to increase productivity","He published his book in 1911","He is the father of scientific management","He developed the 14 principles"],
+["h","History","How many years passed between 'The Wealth of Nations' (1776) and Taylor's 'Principles of Scientific Management' (1911)?","135 years","125 years","145 years","155 years"],
+["h","History","According to the notes, for how many years did the Industrial Revolution last?","100 years","50 years","150 years","200 years"],
+["h","History","Which sequence is in the correct chronological order?","Industrial Revolution (1750), Wealth of Nations (1776), Principles of Scientific Management (1911)","Wealth of Nations (1776), Industrial Revolution (1750), Principles of Scientific Management (1911)","Principles of Scientific Management (1911), Industrial Revolution (1750), Wealth of Nations (1776)","Wealth of Nations (1776), Principles of Scientific Management (1911), Industrial Revolution (1750)"],
+["h","History","Which is NOT one of Taylor's four principles?","Let each worker choose any method by guesswork","Develop a scientific method for every job","Select, train, teach and develop workers scientifically","Cooperate with workers so they follow the developed method"],
+["h","History","Selecting the right worker, providing suitable tools, using standard methods and offering financial incentives were emphasized by:","Taylor","Weber","Fayol","Adam Smith"],
+["h","History","Which pairing of thinker and idea is correct?","Gilbreths - microchronometer","Taylor - bureaucracy","Weber - division of labour in The Wealth of Nations","Fayol - operations research"],
+["h","History","A factory studies each worker's time and movements, hires the best-qualified people and pays according to output. Which approach is it using?","Scientific management","Bureaucracy","Quality management","Operations research"],
+["h","History","Why did management become especially important during the Industrial Revolution?","Machines replaced human labour and large organizations were created that needed management","Management was invented in 1911","Machines replaced all managers","The Great Wall had to be built"],
+["h","Theories","Which description best matches Weber's bureaucracy?","Clear rules, responsibilities and authority, hiring on qualifications and promotion on merit","Hiring by personal connections with unclear rules","An informal workplace with no chain of command","Control through force only"],
+["h","Theories","Which is NOT a main feature of Weber's bureaucracy?","Promotion based on favouritism","Chain of command","Division of labour","Fair application of rules"],
+["h","Theories","Which approach is associated with statistics, information models and computer simulation to help managers make better decisions?","Quantitative approach","Scientific management","General administrative theory","Bureaucratic approach"],
+["h","Theories","Compared with the quantitative approach, quality management mainly stresses:","Satisfying customers and continuously improving processes","Mathematical models for military logistics","Dividing jobs into smaller tasks","Strict chain of command"],
+["h","Organization","Which is NOT a common characteristic of an organization?","Freedom from any structure","A distinct purpose","Composed of people","A deliberate structure"]
+];
+
+const SUBJECTS = [
+  {id:"s1", name:"Introduction to Management", questions: MGMT},
+  {id:"s2", name:"Subject 2", questions: []},
+  {id:"s3", name:"Subject 3", questions: []},
+  {id:"s4", name:"Subject 4", questions: []},
+  {id:"s5", name:"Subject 5", questions: []}
+];
+
+/* ---------- APP ---------- */
+const DIFF = {e:"Easy", m:"Medium", h:"Hard"};
+const app = document.getElementById("app");
+
+function shuffle(a){
+  a = a.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function el(tag, cls, text){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(text !== undefined) e.textContent = text;
+  return e;
+}
+function build(raw){
+  return raw.map((x,i)=>{
+    const [d,t,q,c,...w] = x;
+    const opts = shuffle([c,...w]);
+    return {id:i, d, t, q, opts, a:opts.indexOf(c)};
+  });
+}
+
+let state = null;
+
+function showHome(){
+  state = null;
+  try{ history.replaceState(null,"",location.pathname); }catch(e){}
+  app.innerHTML = "";
+  app.appendChild(el("h1",null,"MCQ Practice"));
+  app.appendChild(el("p","sub","Choose a subject to start practicing."));
+  const grid = el("div","grid");
+  SUBJECTS.forEach((s,i)=>{
+    const b = el("button","subject"+(s.questions.length?"":" empty"));
+    b.appendChild(el("span","num","Subject "+(i+1)));
+    b.appendChild(el("h3",null,s.name));
+    b.appendChild(el("p",null,s.questions.length ? s.questions.length+" questions · Easy, Medium, Hard" : "No MCQs added yet"));
+    b.onclick = ()=>openSubject(s.id);
+    grid.appendChild(b);
+  });
+  app.appendChild(grid);
+}
+
+function openSubject(id){
+  const s = SUBJECTS.find(x=>x.id===id);
+  if(!s){showHome();return;}
+  try{ history.replaceState(null,"","#"+id); }catch(e){}
+  state = {subject:s, qs:build(s.questions), diff:"all", topic:"all", answers:{}};
+  render();
+}
+
+function render(){
+  const {subject, qs} = state;
+  app.innerHTML = "";
+  const back = el("button","back","← All subjects");
+  back.onclick = showHome;
+  app.appendChild(back);
+  app.appendChild(el("h1",null,subject.name));
+
+  if(!qs.length){
+    const box = el("div","panel emptybox");
+    box.appendChild(el("h3",null,"No MCQs added yet"));
+    box.appendChild(el("p",null,"MCQs for this subject will appear here once they are added."));
+    app.appendChild(box);
+    return;
+  }
+
+  /* stats panel */
+  const stats = el("div","panel");
+  const row = el("div","stats");
+  const mk = (id,label)=>{const d=el("div","stat");const b=el("b",null,"0");b.id=id;d.appendChild(b);d.appendChild(el("span",null,label));return d;};
+  row.appendChild(mk("st-ans","Answered"));
+  row.appendChild(mk("st-ok","Correct"));
+  row.appendChild(mk("st-bad","Wrong"));
+  row.appendChild(mk("st-pct","Score"));
+  row.appendChild(mk("st-tot","Questions shown"));
+  stats.appendChild(row);
+  const bar = el("div","bar"); const fill = document.createElement("i"); fill.id="st-bar"; bar.appendChild(fill);
+  stats.appendChild(bar);
+  app.appendChild(stats);
+
+  /* controls */
+  const ctl = el("div","panel controls");
+  const counts = {all:qs.length,e:0,m:0,h:0};
+  qs.forEach(q=>counts[q.d]++);
+  [["all","All"],["e","Easy"],["m","Medium"],["h","Hard"]].forEach(([k,label])=>{
+    const c = el("button","chip"+(state.diff===k?" on":""),label+" ("+counts[k]+")");
+    c.onclick = ()=>{state.diff=k;render();};
+    ctl.appendChild(c);
+  });
+  const sel = document.createElement("select");
+  const topics = ["all"].concat([...new Set(qs.map(q=>q.t))]);
+  topics.forEach(t=>{
+    const o = el("option",null,t==="all"?"All topics":t); o.value=t; if(state.topic===t) o.selected=true; sel.appendChild(o);
+  });
+  sel.onchange = ()=>{state.topic=sel.value;render();};
+  ctl.appendChild(sel);
+  const sh = el("button","btn","🔀 Shuffle");
+  sh.onclick = ()=>{state.qs = shuffle(state.qs);render();};
+  ctl.appendChild(sh);
+  const rs = el("button","btn","↺ Restart");
+  rs.onclick = ()=>{state.qs = build(subject.questions); state.answers={}; render(); window.scrollTo(0,0);};
+  ctl.appendChild(rs);
+  app.appendChild(ctl);
+
+  /* questions */
+  const list = qs.filter(q=>(state.diff==="all"||q.d===state.diff)&&(state.topic==="all"||q.t===state.topic));
+  const holder = el("div");
+  list.forEach((q,n)=>holder.appendChild(renderQ(q,n+1)));
+  if(!list.length) holder.appendChild(el("div","panel emptybox","No questions match these filters."));
+  app.appendChild(holder);
+  app.appendChild(el("div","result hidden")).id = "final";
+  updateStats(list);
+}
+
+function renderQ(q,n){
+  const card = el("div","q");
+  const meta = el("div","meta");
+  meta.appendChild(el("span","tag "+({e:"easy",m:"medium",h:"hard"}[q.d]),DIFF[q.d]));
+  meta.appendChild(el("span","tag topic",q.t));
+  card.appendChild(meta);
+  card.appendChild(el("p","qtext",n+". "+q.q));
+  const letters = ["A","B","C","D"];
+  const btns = [];
+  q.opts.forEach((o,i)=>{
+    const b = el("button","opt");
+    b.appendChild(el("span","l",letters[i]+"."));
+    b.appendChild(el("span",null,o));
+    b.onclick = ()=>{
+      if(state.answers[q.id]!==undefined) return;
+      state.answers[q.id] = i;
+      paint();
+      updateStats();
+    };
+    btns.push(b); card.appendChild(b);
+  });
+  const note = el("div","note hidden");
+  card.appendChild(note);
+  function paint(){
+    const chosen = state.answers[q.id];
+    if(chosen===undefined) return;
+    card.classList.add("done");
+    btns.forEach((b,i)=>{
+      if(i===q.a) b.classList.add("ok");
+      else if(i===chosen) b.classList.add("bad");
+    });
+    note.classList.remove("hidden","ok","bad");
+    if(chosen===q.a){note.classList.add("ok");note.textContent="✓ Correct";}
+    else{note.classList.add("bad");note.textContent="✗ Wrong. Correct answer: "+letters[q.a]+". "+q.opts[q.a];}
+  }
+  paint();
+  return card;
+}
+
+function updateStats(list){
+  const {qs,answers} = state;
+  const shown = qs.filter(q=>(state.diff==="all"||q.d===state.diff)&&(state.topic==="all"||q.t===state.topic));
+  let ok=0,bad=0;
+  shown.forEach(q=>{
+    const a = answers[q.id];
+    if(a===undefined) return;
+    if(a===q.a) ok++; else bad++;
+  });
+  const done = ok+bad;
+  document.getElementById("st-ans").textContent = done+" / "+shown.length;
+  document.getElementById("st-ok").textContent = ok;
+  document.getElementById("st-bad").textContent = bad;
+  document.getElementById("st-pct").textContent = done ? Math.round(ok/done*100)+"%" : "-";
+  document.getElementById("st-tot").textContent = shown.length;
+  document.getElementById("st-bar").style.width = (shown.length ? done/shown.length*100 : 0)+"%";
+  const fin = document.getElementById("final");
+  if(fin){
+    if(shown.length && done===shown.length){
+      fin.classList.remove("hidden");
+      fin.textContent = "🎉 Finished! You scored "+ok+" out of "+shown.length+" ("+Math.round(ok/shown.length*100)+"%).";
+    } else fin.classList.add("hidden");
+  }
+}
+
+/* start */
+const hash = location.hash.replace("#","");
+if(hash && SUBJECTS.some(s=>s.id===hash)) openSubject(hash); else showHome();
+</script>
+</body>
+</html>
